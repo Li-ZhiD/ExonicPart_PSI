@@ -29,6 +29,6 @@ cat path/to/all/sample/STAR/out/*SJ.out.tab | awk '{print $1,$2,$3,$4,$5,$6,$7}'
 
 #### Calculate PSI
 ```bash
-bash path/to/PSI.sh StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1
+bash path/to/PSI.sh StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
 ```
 
