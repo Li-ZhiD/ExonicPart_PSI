@@ -1,6 +1,9 @@
 ## Exonic Part PSI
 #### Reference: Alternative Splicing Signatures in RNA-seq Data: Percent Spliced in (PSI), Curr. Protoc. Hum. Genet. 87:11.16.1-11.16.14. doi: 10.1002/0471142905.hg1116s87
-#### PSI.sh derived from https://github.com/lehner-lab/Scaling_Law/blob/master/001_Exon_inclusion_levels_in_different_animals/PSI.sh, http://www.currentprotocols.com/protocol/hg1116, adding <path_to_bedtools2.23> for specify bedtools2.23
+#### PSI.sh derived from 
+- https://github.com/lehner-lab/Scaling_Law/blob/master/001_Exon_inclusion_levels_in_different_animals/PSI.sh
+- http://www.currentprotocols.com/protocol/hg1116
+- adding <path_to_bedtools2.23> for specify bedtools2.23
 
 #### Dependency
 - python2
@@ -13,6 +16,8 @@
 python2 path/to/dexseq_prepare_annotation.py path/to/Homo_sapiens.GRCh38.93.gtf Homo_sapiens.GRCh38.93_reduce.gtf
 
 awk '{OFS="\t"}{if ($3 == "exonic_part") print $1,$2,$3,$4,$5,$6,$7,$8,$14":"$12}' Homo_sapiens.GRCh38.93_reduce.gtf | sed 's=[";]==g' > Homo_sapiens.GRCh38.93_Exonic_part.gff
+
+rm Homo_sapiens.GRCh38.93_reduce.gtf
 ```
 
 #### Make SJ bed file from all samples
