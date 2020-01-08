@@ -1,5 +1,7 @@
 ## Exonic Part PSI
-#### Reference: Alternative Splicing Signatures in RNA-seq Data: Percent Spliced in (PSI), Curr. Protoc. Hum. Genet. 87:11.16.1-11.16.14. doi: 10.1002/0471142905.hg1116s87
+#### Reference: [doi: 10.1002/0471142905.hg1116s87](./doc/ExonicPart_PSI.pdf)
+- Alternative Splicing Signatures in RNA-seq Data: Percent Spliced in (PSI), Curr. Protoc. Hum. Genet.
+
 #### PSI.sh derived from 
 - https://github.com/lehner-lab/Scaling_Law/blob/master/001_Exon_inclusion_levels_in_different_animals/PSI.sh
 - http://www.currentprotocols.com/protocol/hg1116
