@@ -28,7 +28,12 @@ cat path/to/all/sample/STAR/out/*SJ.out.tab | awk '{print $1,$2,$3,$4,$5,$6,$7}'
 ```
 
 #### Calculate PSI
+##### Method 1, Error
 ```bash
-bash path/to/PSI.sh StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
+bash path/to/PSI.bash StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
 ```
 
+##### Method 2
+```bash
+ bash path/to/ExonicPartPSI.sh path/to/bedtools2.23/bedtools path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff example_1.bam <reads_length> junctions.bed example_1
+```

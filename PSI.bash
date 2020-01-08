@@ -108,8 +108,8 @@ function CountPSI {
     ## checking the inclusion and exclusion input file, if the exonID are not sorted or different, then exit with status 9 
     cut -f5 $inclusion > ${prefix}_exonID1.txt 
     cut -f1 $exclusion > ${prefix}_exonID2.txt 
-    diff ${prefix}_exonID1.txt ${prefix}_exonID2.txt > /dev/null  ||( echo "Unsorted exonID exit" &&  return 9 )
-    rm ${prefix}_exonID1.txt ${prefix}_exonID2.txt 
+    diff ${prefix}_exonID1.txt ${prefix}_exonID2.txt > /dev/null  || ( echo "Unsorted exonID exit" &&  return 9 )
+    rm ${prefix}_exonID1.txt ${prefix}_exonID2.txt
     
     ## Calculating PSI 
     paste  $inclusion $exclusion | awk -v "len=$readLength" -v "prefix=$prefix" 'BEGIN{OFS = "\t"; print "exon_ID",prefix"_length",prefix"_inclusion",prefix"_exclusion",prefix"_PSI" }{NIR=$6/($4+len-1);NER=$8/(len-1)}{print $5,$4,$6,$8,(NIR+NER==0)? "NA":NIR/(NIR + NER)}' > ${prefix}_exonic_parts.psi 
