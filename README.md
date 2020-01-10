@@ -27,7 +27,7 @@ rm Homo_sapiens.GRCh38.93_reduce.gtf
 
 #### Make SJ bed file from all samples
 ```bash
-awk '{print $1,$2,$3,$4,$5,$6,$7}' example_1.SJ.out.tab | sort -u | awk 'BEGIN{OFS="\t"}{print $1, $2-20-1, $3+20, "JUNCBJ"NR, $7, ($4 == 1)? "+":"-",$2-20-1, $3+20, "255,0,0", 2, "20,20", "0,300" }'  > junctions.bed
+awk 'BEGIN{OFS="\t"}{print $1, $2-20-1, $3+20, "JUNCBJ"NR, $7, ($4 == 1)? "+":"-",$2-20-1, $3+20, "255,0,0", 2, "20,20", "0,300" }' example_1.SJ.out.tab > junctions.bed
 ```
 
 #### Calculate PSI
