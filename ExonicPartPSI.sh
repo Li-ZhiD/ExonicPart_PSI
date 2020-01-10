@@ -12,14 +12,14 @@ Description:
     Derived from http://www.currentprotocols.com/protocol/hg1116, adding <path_to_bedtools2.23> for specify bedtools2.23
 
 Usage:
-    bash ExonicPartPSI.sh <path_to_bedtools2.23> <ExonicPart.gff> <alignment_file.bam> <readLength> <junctions_file> <baseName>
+    bash ExonicPartPSI.sh <path_to_bedtools2.23> <ExonicPart.gff> <alignment_file.bam> <readLength> <SJ.out.tab> <baseName>
 
 Mandatory:
     <path_to_bedtools2.23>      Path to bedtools, version 2.23
     <ExonicPart.gff>            ExonicPart gff, deriverd from dexseq_prepare_annotation.py
     <alignment_file.bam>        RNAseq aligned bam files
     <readLength>                RNAseq reads length, only one side.
-    <junctions_file>            SJ.bed file.
+    <SJ.out.tab>                SJ.out.tab file.
     <baseName>                  Prefix of outputfiles.
 
 For details see: "Schafer, S., et al. 2015. Alternative splicing signatures in RNA-seq data: percent spliced in (PSI). Curr. Protoc. Hum. Genet."
@@ -39,16 +39,20 @@ readLength=$4
 JUNCTIONS=$5
 PREFIX=$6
 
+echo "Make junctions bed file...."
+awk 'BEGIN{OFS="\t"}{print $1, $2-20-1, $3+20, "JUNCBJ"NR, $7, ($4 == 1)? "+":"-",$2-20-1, $3+20, "255,0,0", 2, "20,20", "0,300" }' ${JUNCTIONS} > ${PREFIX}_junctions.bed
+
+
 echo "Counting exon coverage...."
 ${BEDTOOLS} coverage -split -abam ${INBAM} -b ${GFF} | awk 'BEGIN{OFS="\t"} {print $1,$4,$5,$5-$4+1,$9,$10}' | sort -k 5 > ${PREFIX}_exonic_parts.inclusion
 
 echo "Filtering junction...."
-sed 's/,/\t/g' ${JUNCTIONS} | awk 'BEGIN{OFS="\t"} {print $1,$2,$2+$13,$4,$5,$6}' > ${PREFIX}_left.bed
-sed 's/,/\t/g' ${JUNCTIONS} | awk 'BEGIN{OFS="\t"} {print $1,$3-$14,$3,$4,$5,$6}' > ${PREFIX}_right.bed
+sed 's/,/\t/g' ${PREFIX}_junctions.bed | awk 'BEGIN{OFS="\t"} {print $1,$2,$2+$13,$4,$5,$6}' | awk '{if ($2 < 0) $2 = 0}{print $0}' > ${PREFIX}_left.bed
+sed 's/,/\t/g' ${PREFIX}_junctions.bed | awk 'BEGIN{OFS="\t"} {print $1,$3-$14,$3,$4,$5,$6}' | awk '{if ($2 < 0) $2 = 0}{print $0}' > ${PREFIX}_right.bed
 ${BEDTOOLS} intersect -u -s -a ${PREFIX}_left.bed -b ${GFF} > ${PREFIX}_left.overlap
 ${BEDTOOLS} intersect -u -s -a ${PREFIX}_right.bed -b ${GFF} > ${PREFIX}_right.overlap
 cat ${PREFIX}_left.overlap ${PREFIX}_right.overlap | cut -f4 | sort | uniq -c | awk '{if($1 == 2) print$2}' > ${PREFIX}_filtered_junctions.txt
-grep -F -f ${PREFIX}_filtered_junctions.txt ${JUNCTIONS} > ${PREFIX}_filtered_junctions.bed
+grep -F -f ${PREFIX}_filtered_junctions.txt ${PREFIX}_junctions.bed > ${PREFIX}_filtered_junctions.bed
 rm ${PREFIX}_left.bed ${PREFIX}_right.bed ${PREFIX}_left.overlap ${PREFIX}_right.overlap ${PREFIX}_filtered_junctions.txt
 
 sed 's/,/\t/g' ${PREFIX}_filtered_junctions.bed | grep -v description | awk '{OFS="\t"}{print $1,$2+$13, $3-$14,$4,$5,$6}' > ${PREFIX}_intron.bed

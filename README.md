@@ -2,10 +2,13 @@
 #### Reference: [doi: 10.1002/0471142905.hg1116s87](./doc/ExonicPart_PSI.pdf)
 - Alternative Splicing Signatures in RNA-seq Data: Percent Spliced in (PSI), Curr. Protoc. Hum. Genet.
 
-#### PSI.sh derived from 
+##### PSI.sh derived from 
 - https://github.com/lehner-lab/Scaling_Law/blob/master/001_Exon_inclusion_levels_in_different_animals/PSI.sh
 - http://www.currentprotocols.com/protocol/hg1116
 - adding <path_to_bedtools2.23> for specify bedtools2.23
+
+##### ExonicPartPSI.sh is organized from [doi: 10.1002/0471142905.hg1116s87](./doc/ExonicPart_PSI.pdf)
+- add "awk '{if ($2 < 0) $2 = 0}{print $0}'" in Filtering junction
 
 #### Dependency
 - python2
@@ -28,12 +31,12 @@ cat path/to/all/sample/STAR/out/*SJ.out.tab | awk '{print $1,$2,$3,$4,$5,$6,$7}'
 ```
 
 #### Calculate PSI
-##### Method 1, Error
+##### Method 1, for junction.bed
 ```bash
 bash path/to/PSI.bash StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
 ```
 
-##### Method 2
+##### Method 2, for STAR output
 ```bash
- bash path/to/ExonicPartPSI.sh path/to/bedtools2.23/bedtools path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff example_1.bam <reads_length> junctions.bed example_1
+ bash path/to/ExonicPartPSI.sh path/to/bedtools2.23/bedtools path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff example_1.bam <reads_length> example_1.SJ.out.tab example_1
 ```
