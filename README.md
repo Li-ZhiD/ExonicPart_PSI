@@ -12,7 +12,7 @@
 
 #### Dependency
 - python2
-- HTSeq, python2
+- DEXseq, python2
 - bedtools2.23
 
 ## Example, RNAseq sample from human
