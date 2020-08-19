@@ -40,15 +40,16 @@ JUNCTIONS=$5
 PREFIX=$6
 
 echo "Make junctions bed file...."
-awk 'BEGIN{OFS="\t"}{print $1, $2-20-1, $3+20, "JUNCBJ"NR, $7, ($4 == 1)? "+":"-",$2-20-1, $3+20, "255,0,0", 2, "20,20", "0,300" }' ${JUNCTIONS} > ${PREFIX}_junctions.bed
+sort -k1,1 -k2,2n -k3,3n ${JUNCTIONS} | awk 'BEGIN{OFS="\t"}{print $1, $2-20-1, $3+20, "JUNCBJ"NR, $7, ($4 == 1)? "+":"-",$2-20-1, $3+20, "255,0,0", 2, "20,20", "0,300" }' > ${PREFIX}_junctions.bed
 
 
 echo "Counting exon coverage...."
-${BEDTOOLS} coverage -split -abam ${INBAM} -b ${GFF} | awk 'BEGIN{OFS="\t"} {print $1,$4,$5,$5-$4+1,$9,$10}' | sort -k 5 > ${PREFIX}_exonic_parts.inclusion
+${BEDTOOLS} coverage -split -abam ${INBAM} -b ${GFF} | awk 'BEGIN{OFS="\t"} {print $1,$4,$5,$5-$4+1,$9,$10}' | sort -k5,5 > ${PREFIX}_exonic_parts.inclusion
 
 echo "Filtering junction...."
-sed 's/,/\t/g' ${PREFIX}_junctions.bed | awk 'BEGIN{OFS="\t"} {print $1,$2,$2+$13,$4,$5,$6}' | awk '{if ($2 < 0) $2 = 0}{print $0}' > ${PREFIX}_left.bed
-sed 's/,/\t/g' ${PREFIX}_junctions.bed | awk 'BEGIN{OFS="\t"} {print $1,$3-$14,$3,$4,$5,$6}' | awk '{if ($2 < 0) $2 = 0}{print $0}' > ${PREFIX}_right.bed
+## fix left boundary
+sed 's/,/\t/g' ${PREFIX}_junctions.bed | awk 'BEGIN{OFS="\t"} {print $1,$2,$2+$13,$4,$5,$6}' | awk 'BEGIN{OFS="\t"} {if ($2 < 0) $2 = 0}{print $0}' | sort -k1,1 -k2,2n -k3,3n > ${PREFIX}_left.bed
+sed 's/,/\t/g' ${PREFIX}_junctions.bed | awk 'BEGIN{OFS="\t"} {print $1,$3-$14,$3,$4,$5,$6}' | awk 'BEGIN{OFS="\t"} {if ($2 < 0) $2 = 0}{print $0}' | sort -k1,1 -k2,2n -k3,3n > ${PREFIX}_right.bed
 ${BEDTOOLS} intersect -u -s -a ${PREFIX}_left.bed -b ${GFF} > ${PREFIX}_left.overlap
 ${BEDTOOLS} intersect -u -s -a ${PREFIX}_right.bed -b ${GFF} > ${PREFIX}_right.overlap
 cat ${PREFIX}_left.overlap ${PREFIX}_right.overlap | cut -f4 | sort | uniq -c | awk '{if($1 == 2) print$2}' > ${PREFIX}_filtered_junctions.txt
@@ -59,7 +60,7 @@ sed 's/,/\t/g' ${PREFIX}_filtered_junctions.bed | grep -v description | awk '{OF
 rm ${PREFIX}_filtered_junctions.bed
 
 echo "Counting exclusion...."
-${BEDTOOLS} intersect -wao -f 1.0 -s -a ${GFF} -b ${PREFIX}_intron.bed | awk 'BEGIN{OFS="\t"}{$16 == 0? s[$9] += 0:s[$9] += $14}END{for (i in s) {print i,s[i]}}' | sort -k 1 > ${PREFIX}_exonic_parts.exclusion
+${BEDTOOLS} intersect -wao -f 1.0 -s -a ${GFF} -b ${PREFIX}_intron.bed | awk 'BEGIN{OFS="\t"}{$16 == 0? s[$9] += 0:s[$9] += $14}END{for (i in s) {print i,s[i]}}' | sort -k1,1 > ${PREFIX}_exonic_parts.exclusion
 rm ${PREFIX}_intron.bed
 
 echo "Calculating PSI value..."

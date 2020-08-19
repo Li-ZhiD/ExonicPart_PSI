@@ -33,10 +33,24 @@ awk 'BEGIN{OFS="\t"}{print $1, $2-20-1, $3+20, "JUNCBJ"NR, $7, ($4 == 1)? "+":"-
 #### Calculate PSI
 ##### Method 1, for junction.bed
 ```bash
-bash path/to/PSI.bash StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
+## only count SJ of all annotated exon
+bash path/to/PSI_1.bash StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
+
+## count SJ of all in SJ.out.tab
+bash path/to/PSI_2.bash StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
 ```
 
 ##### Method 2, for STAR output
 ```bash
- bash path/to/ExonicPartPSI.sh path/to/bedtools2.23/bedtools path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff example_1.bam <reads_length> example_1.SJ.out.tab example_1
+## only count SJ of all annotated exon
+ bash path/to/ExonicPartPSI_1.sh path/to/bedtools2.23/bedtools path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff example_1.bam <reads_length> example_1.SJ.out.tab example_1
+
+## count SJ of all in SJ.out.tab
+ bash path/to/ExonicPartPSI_2.sh path/to/bedtools2.23/bedtools path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff example_1.bam <reads_length> example_1.SJ.out.tab example_1
+
+## only count SJ of all annotated exon (large chromosome)
+ bash path/to/ExonicPartPSI_1g.sh path/to/bedtools2.23/bedtools path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff genomefile example_1.bam <reads_length> example_1.SJ.out.tab example_1
+
+## count SJ of all in SJ.out.tab (large chromosome)
+ bash path/to/ExonicPartPSI_2g.sh path/to/bedtools2.23/bedtools path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff genomefile example_1.bam <reads_length> example_1.SJ.out.tab example_1
 ```
