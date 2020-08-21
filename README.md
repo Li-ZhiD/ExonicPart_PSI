@@ -25,22 +25,8 @@ awk '{OFS="\t"}{if ($3 == "exonic_part") print $1,$2,$3,$4,$5,$6,$7,$8,$14":"$12
 rm Homo_sapiens.GRCh38.93_reduce.gtf
 ```
 
-#### Make SJ bed file from all samples
-```bash
-awk 'BEGIN{OFS="\t"}{print $1, $2-20-1, $3+20, "JUNCBJ"NR, $7, ($4 == 1)? "+":"-",$2-20-1, $3+20, "255,0,0", 2, "20,20", "0,300" }' example_1.SJ.out.tab > junctions.bed
-```
-
-#### Calculate PSI
-##### Method 1, for junction.bed
-```bash
-## only count SJ of all annotated exon
-bash path/to/PSI_1.bash StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
-
-## count SJ of all in SJ.out.tab
-bash path/to/PSI_2.bash StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
-```
-
-##### Method 2, for STAR output
+#### Call PSI
+##### Method 1, for STAR output
 ```bash
 ## only count SJ of all annotated exon
  bash path/to/ExonicPartPSI_1.sh path/to/bedtools2.23/bedtools path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff example_1.bam <reads_length> example_1.SJ.out.tab example_1
@@ -53,4 +39,16 @@ bash path/to/PSI_2.bash StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff 
 
 ## count SJ of all in SJ.out.tab (large chromosome)
  bash path/to/ExonicPartPSI_2g.sh path/to/bedtools2.23/bedtools path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff genomefile example_1.bam <reads_length> example_1.SJ.out.tab example_1
+```
+
+##### Method 2, for junction.bed
+```bash
+## Make SJ bed file from STAR SJ.out.tab
+awk 'BEGIN{OFS="\t"}{print $1, $2-20-1, $3+20, "JUNCBJ"NR, $7, ($4 == 1)? "+":"-",$2-20-1, $3+20, "255,0,0", 2, "20,20", "0,300" }' example_1.SJ.out.tab > junctions.bed
+
+## only count SJ of all annotated exon
+bash path/to/PSI_1.bash StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
+
+## count SJ of all in SJ.out.tab
+bash path/to/PSI_2.bash StartPSI path/to/Homo_sapiens.GRCh38.93_Exonic_part.gff <reads_length> example_1.bam junctions.bed example_1 path/to/bedtools2.23
 ```
